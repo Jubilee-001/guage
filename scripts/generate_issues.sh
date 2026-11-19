@@ -124,6 +124,22 @@ backlog() {
     'G10	type: docs	area: docs	gate: ROADMAP.md current in the latest merged PR'
 }
 
+# Read the curated table once. The main loop consumes this copy, and the
+# duplicate check runs before any mode can turn a repeated id into a second
+# issue with the same marker.
+backlog_file="$(mktemp)"
+trap 'rm -f "${backlog_file}"' EXIT
+backlog >"${backlog_file}"
+
+duplicates="$(cut -f1 "${backlog_file}" | sort | uniq -d)"
+if [ -n "${duplicates}" ]; then
+  while IFS= read -r id; do
+    [ -n "${id}" ] || continue
+    echo "generate_issues: duplicate backlog row for ${id}" >&2
+  done <<<"${duplicates}"
+  exit 1
+fi
+
 strip_backticks() {
   tr -d '`'
 }
@@ -314,7 +330,7 @@ while IFS=$'\t' read -r id ttype tarea title; do
   fi
   rm -f "${body}"
   planned=$((planned + 1))
-done < <(backlog)
+done <"${backlog_file}"
 
 if [ "${check}" -eq 1 ]; then
   missing="$(awk '/^- \[[ ]\] \*\*(G[0-9]+|[0-6]\.[0-9]+)\*\*/ {

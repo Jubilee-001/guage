@@ -111,8 +111,8 @@ backlog() {
     '6.3	type: research	area: rules	docs(triage): review external false-positive reports' \
     '6.4	type: research	area: docs	docs(decisions): decide funding and applications (D-07)' \
     '6.5	type: docs	area: docs	docs(outreach): contact issuers, anchors and treasury teams' \
-    '7.8	type: test	area: cli	test(cli): refuse a seed before building a client' \
-    '7.9	type: test	area: ci	test(ci): reject duplicated backlog rows' \
+    '7.8	type: test	area: rules	test(rules): prove rule evaluation never mutates the observed snapshot' \
+    '7.9	type: test	area: rules	test(rules): each finding carries the ID of the rule that emitted it' \
     '7.10	type: feature	area: model	feat(model): add Valid and Equal helpers to Thresholds and Flags' \
     '7.11	type: bug	area: model	fix(model): give the clawback flag one JSON name' \
     '7.12	type: test	area: model	test(model): pin exact fingerprint hex for fixed inputs' \
@@ -134,6 +134,9 @@ backlog() {
     '7.29	type: test	area: threshold	test(threshold): stop the sum at the twenty signature envelope cap' \
     '7.30	type: test	area: threshold	test(threshold): cross-check both answers over mixed signers' \
     '7.31	type: feature	area: policy	feature(policy): report every unknown config key, not only the first' \
+    '7.44	type: test	area: cli	test(cli): refuse a seed before building a client' \
+    '7.45	type: test	area: ci	test(ci): reject duplicated backlog rows' \
+    '7.32	type: test	area: rules	test(rules): guard that no rule restates threshold arithmetic' \
     'G1	type: test	area: rules	gate: every P0 requirement has passing tests' \
     'G2	type: test	area: rules	gate: every scenario has a fixture and expected findings' \
     'G3	type: test	area: cli	gate: fail-closed paths all exit non-zero' \

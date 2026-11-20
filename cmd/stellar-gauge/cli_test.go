@@ -663,6 +663,12 @@ func TestAuditFailsClosed(t *testing.T) {
 			wantMsg:  "does not define",
 		},
 		{
+			name:     "three unknown keys in one run",
+			body:     policyFor(srv.URL) + "\nzendpoints = []\nexpectedflags = {}\nowners = []\n",
+			wantCode: 2,
+			wantMsg:  "does not define (account.expectedflags, account.owners, account.zendpoints)",
+		},
+		{
 			name:     "secret seed",
 			body:     policyFor(srv.URL) + "\n[[accept]]\nrule = \"flag-drift\"\naccount = \"" + seed + "\"\nreason = \"x\"\n",
 			wantCode: 2,

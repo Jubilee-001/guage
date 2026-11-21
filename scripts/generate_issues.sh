@@ -114,6 +114,8 @@ backlog() {
     '7.5	type: test	area: cli	test(cli): refuse a seed before building a client' \
     '7.6	type: test	area: ci	test(ci): reject duplicated backlog rows' \
     '7.8	type: test	area: rules	test(rules): prove rule evaluation never mutates the observed snapshot' \
+    '7.9	type: test	area: rules	test(rules): each finding carries the ID of the rule that emitted it' \
+    '7.10	type: feature	area: model	feat(model): add Valid and Equal helpers to Thresholds and Flags' \
     '7.33	type: security	area: sanitize	security(sanitize): conformance matrix across all four entry points' \
     '7.34	type: test	area: run	test(run): keep the first account error when a later read fails' \
     '7.35	type: fix	area: run	fix(run): stop the run when the context ends between stages' \

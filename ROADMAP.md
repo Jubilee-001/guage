@@ -1,6 +1,6 @@
 # ROADMAP: Gauge
 
-Last updated: 2026-11-20T18:49Z (tasks 7.33 to 7.35, close #199, #200, #201: sanitizer conformance matrix, first account error survives, run stops when the context ends between stages)
+Last updated: 2026-11-21T07:00Z (restore lost backlog tasks 7.5 and 7.6, update progress table to 29/33)
 Roadmap version: 3
 
 This file is the single source of truth for remaining work. It is read before every task and updated after every change.
@@ -40,7 +40,7 @@ The repository is 100% ready when every task in Phases 0 to 6 is done and every 
 | 4 | Dogfood and release v0.1.0 | 4 | 9 | 44% |
 | 5 | v0.2 features | 5 | 11 | 45% |
 | 6 | Release v0.2.0 and community | 0 | 5 | 0% |
-| 7 (backlog) | Backlog | 27 | 31 | 87% |
+| 7 (backlog) | Backlog | 29 | 33 | 87% |
 | **Phases 0 to 6** | **Readiness total** | **62** | **79** | **78%** |
 | Gates | G1 to G10 | 7 | 10 | 70% |
 <!-- PROGRESS:END -->
@@ -226,6 +226,8 @@ Constraint on the two remaining experimental tasks: Gauge never builds or submit
 - [ ] **7.2** Claimable balances, liquidity pool shares and sponsorship analysis.
 - [ ] **7.3** Alert integrations (probably never; JSON and CI cover it).
 - [ ] **7.4** Cross-check issued assets against `stellar.toml` currencies.
+- [x] **7.5** A seed argument is refused before any network client is built. S. Deps: 2.4. Done when: `cmd/stellar-gauge/seed_reject_test.go` drives `runCLI` with source and identity factories that fail the test if they are invoked. Two cases, a seed alone and a valid G address followed by the seed, assert exit 2, the rotate-the-key refusal, empty stdout, no factory call and no echo of the seed. Moving `validateAccountArgs` below `run.Check` fails the test. (done 2026-11-19)
+- [x] **7.6** A duplicated backlog row fails `generate_issues.sh --check`. S. Deps: 1.14. Done when: `generate_issues.sh` reads `backlog()` once into a temp file, traps its cleanup and exits 1 with `generate_issues: duplicate backlog row for <id>` before the main loop in every mode. `scripts/test_backlog_dupes.sh` copies the script, duplicates the 1.9 row, asserts the refusal and exit 1 under a `gh` stub, then asserts the unmodified script still prints that the backlog covers every open task. (done 2026-11-19)
 - [x] **7.8** test(rules): prove rule evaluation never mutates the observed snapshot. M. Deps: none. Done when: `internal/rules/purity_test.go` deep-copies a populated snapshot, runs `Evaluate`, and asserts the original equals the copy with `reflect.DeepEqual`, including length and order of both slices; a second `Evaluate` returns the same findings and the test fails when a local in-place `sort.Slice` is added. (done 2026-11-20: `TestEvaluationDoesNotMutate` builds a context that raises most of the catalogue, with signers, balances, declared signers and identity accounts in an order that is neither key nor weight sorted, and checks the snapshot element by element plus `reflect.DeepEqual` on snapshot, account and identity after each of two `Evaluate` calls and after `Facts`. `TestEachRuleLeavesTheContextAlone` runs each registered rule alone so a failure names the rule. Adding `sort.Slice(signers, ...)` at the top of `describeSigners` fails both. No defensive copy was added to `Evaluate`; issue #178.)
 - [x] **7.9** test(rules): each finding carries the ID of the rule that emitted it. M. Deps: none. Done when: `internal/rules/finding_ruleid_test.go` has one firing context per registered rule, keyed by registry ID, fails if a rule has no row, and asserts every finding's `RuleID` equals that entry's `ID`, including one rule with two findings. (done 2026-11-20: `TestFindingRuleID` walks `All()`, fires each rule on a local context with an exact finding count (`sig-hashx` raises two), and also fails on a table row naming no registered rule. `TestFindingRuleIDThroughEvaluate` checks the same promise on the `Evaluate` path. Changing the `sig-hashx` literal in `signers.go` to `sig-hashy` fails both, naming the phantom ID. No rule literal or registry entry moved; issue #179.)
 - [x] **7.10** `Thresholds.Valid`, `Thresholds.Equal`, `Flags.Valid` and `Flags.Equal` in `internal/model`, so an observation can be range-checked and two observations compared. M. Deps: 2.1. Done when: `Thresholds.Valid` is false below 0 or above 255, both `Equal` methods compare every field, and `internal/model/account_thresholds_test.go` covers the boundaries, equality and all sixteen flag combinations. (done 2026-11-19: `Valid` bounds each threshold tier to 0 through 255, the range the schema fixes and the loader already enforces on declared values, and says nothing about tier order, which `sig-threshold-order` owns. `Flags.Valid` is true for all sixteen combinations because every bool is in range and no exclusion is documented; the test sweeps them so adding one is a visible change. Both `Equal` methods compare the whole struct, so a field added later is covered without editing them. No change to `internal/rules`, `internal/policy` or `internal/source`: the `compare` closures in `flagDrift` and `thrDrift` stay, since they carry a message and compare against the declared type.)
